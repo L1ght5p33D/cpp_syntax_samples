@@ -1,0 +1,33 @@
+// use -lcurl for compile
+//fatal error: curl/curl.h: No such file or directory
+//  sudo apt-get install libcurl4-gnutls-dev
+
+#include <curl/curl.h>
+#include <iostream>
+#include <curl/curl.h>
+
+static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp){
+    ((std::string*)userp)->append((char*)contents, size * nmemb);
+    return size * nmemb;
+}
+
+int main(){
+  CURL * curl;
+  CURLcode res;
+  std::string readBuffer;
+
+  curl = curl_easy_init();
+  if(curl) {
+
+
+	  curl_easy_setopt(curl, CURLOPT_URL, "http://localhost:8888/stuff");
+ 
+curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+    res = curl_easy_perform(curl);
+    curl_easy_cleanup(curl);
+
+    std::cout << readBuffer << std::endl;
+  }
+  return 0;
+}
